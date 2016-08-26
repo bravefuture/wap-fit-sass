@@ -10,45 +10,90 @@
 
 ## SASS 代码
 ```sass
+/**
+ * 引用重置样式
+ */
 @import '../reset';
-
+/**
+ * [$fontSizeBase 字体基数]
+ * @type {[type]}
+ */
 $fontSizeBase: 100px;
-$version: '?v=201607271515';
-$url: '../images/index/';
-
-// px转rem
+/**
+ * [$version 版本号]
+ * @type {String}
+ */
+$version: '?v=201608261701';
+/**
+ * [$url 背景图片目录路径]
+ * @type {String}
+ */
+$url: '../../images/schedule/';
+/**
+ * [px2rem px单位转rem单位]
+ * @param  {[type]} $px [参数px值]
+ * @return {[type]}     [返回rem单位]
+ */
 @function px2rem($px){
 	@if(type-of($px) == 'number'){
 		@return $px / $fontSizeBase * 1rem;		
 	}
 }
-
-// 雪碧图定位
-$imgW: 160px; // 雪碧图宽度
-$imgH: 114px; // 雪碧图高度
-@function bpspx($bgW, $x, $w){
-	@if($bgW / 1px - $w / 1px == 0){
-		@return 0;
+/**
+ * [sprite 雪碧图]
+ * @param  {[type]} $bgW [合成图宽度]
+ * @param  {[type]} $bgH [合成图高度]
+ * @param  {[type]} $w   [单个图宽度]
+ * @param  {[type]} $h   [单个图高度]
+ * @param  {[type]} $x   [单个图x轴位移]
+ * @param  {[type]} $y   [单个图y轴位移]
+ */
+@mixin sprite($bgW, $bgH, $w, $h, $x, $y){ 
+	@function spritePosX($bgW, $x, $w){
+		@if ($bgW / 1px - $w / 1px == 0) {
+			@return 0;
+		} @else {
+			@return $x / ($bgW - $w) * 100%;
+		}	
 	}
-	@else{
-		@return $x / ($bgW - $w) * 100%;
-	}	
-}
-@function bpspy($bgH, $y, $h){
-	@if($bgH / 1px - $h / 1px == 0){
-		@return 0;
+	@function spritePosY($bgH, $y, $h){
+		@if ($bgH / 1px - $h / 1px == 0) {
+			@return 0;
+		} @else {
+			@return $y / ($bgH - $h) * 100%;
+		}	
 	}
-	@else{
-		@return $y / ($bgH - $h) * 100%;
-	}	
+	@function spriteSize($bgW, $w){
+		@return $bgW / $w * 100%;
+	}
+	background-position: spritePosX($bgW, $x, $w) spritePosY($bgH, $y, $h); background-size: spriteSize($bgW, $w); width: px2rem($w); height: px2rem($h);
 }
-@function bpss($bgW, $w){
-	@return $bgW / $w * 100%;
+/**
+ * [text-middle 文字垂直居中]
+ * @param  {[type]} $h [高度]
+ */
+@mixin text-middle($h) { height: px2rem($h); line-height: px2rem($h);}
+/**
+ * [left 左浮动]
+ */
+.left{ float: left; display: inline;}
+/**
+ * [right 右浮动]
+ */
+.right{ float: right; display: inline;}
+/**
+ * [clearfix 清浮动]
+ */
+.clearfix{
+    &:before, &:after{ display: table; content: ""; line-height: 0;}
+    &:after{ clear: both;}
 }
-%bps{
-	background: url("#{$url}bg.png#{$version}") no-repeat;
-}
-@mixin bps($bgW, $bgH, $w, $h, $x, $y){ 
-	@extend %bps; background-position: bpspx($bgW, $x, $w) bpspy($bgH, $y, $h); background-size: bpss($bgW, $w); width: px2rem($w); height: px2rem($h);
-}
+/**
+ * [overflow 超过宽度加省略号]
+ */
+.text-overflow{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+/**
+ * [indent 背景图片添加文字描述]
+ */
+.text-seo{ text-indent: -999999rem;}
 ```
